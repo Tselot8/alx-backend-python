@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 import psycopg2
+import psycopg2.extras
 
 # ---------------- Generator to fetch users in batches ---------------- #
 def stream_users_in_batches(batch_size):
@@ -8,11 +9,11 @@ def stream_users_in_batches(batch_size):
     """
     connection = psycopg2.connect(
         host="localhost",
-        user="postgres",        # replace with your DB user
-        password="yourpassword",# replace with your DB password
+        user="postgres",         # replace with your DB user
+        password="yourpassword", # replace with your DB password
         database="ALX_prodev"
     )
-    cursor = connection.cursor(dictionary=True)  # psycopg2 extras: RealDictCursor
+    cursor = connection.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
     cursor.execute("SELECT * FROM user_data;")
 
     while True:
