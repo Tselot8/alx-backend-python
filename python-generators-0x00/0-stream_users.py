@@ -6,9 +6,9 @@ def stream_users():
     """Generator that streams rows from user_data table one by one"""
     connection = psycopg2.connect(
         host="localhost",
-        user="postgres",         # your PostgreSQL username
-        password="Myart@2023!",     # your PostgreSQL password
-        dbname="ALX_prodev"      # your PostgreSQL database
+        user="postgres",         
+        password="Myart@2023!",    
+        dbname="ALX_prodev"      
     )
     cursor = connection.cursor(cursor_factory=RealDictCursor)
 

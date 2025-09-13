@@ -8,8 +8,8 @@ def with_db_connection(func):
         conn = psycopg2.connect(
             host='localhost',
             user='postgres',
-            password='Myart@2023!',  # replace with your actual password
-            dbname='alx_prodev'      # replace with your database name
+            password='Myart@2023!',  
+            dbname='alx_prodev'      
         )
         try:
             result = func(conn, *args, **kwargs)

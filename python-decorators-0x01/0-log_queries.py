@@ -1,14 +1,14 @@
 import psycopg2
 from psycopg2 import extras
 import functools
-from datetime import datetime  # <-- add this import
+from datetime import datetime  
 
-#### decorator to log SQL queries with timestamp
+#### decorator to log queries with timestamp
 def log_queries(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         query = kwargs.get('query') if 'query' in kwargs else args[0]
-        print(f"[{datetime.now()}] [LOG] Executing query: {query}")  # timestamp added
+        print(f"[{datetime.now()}] [LOG] Executing query: {query}") 
         result = func(*args, **kwargs)
         print(f"[{datetime.now()}] [LOG] Query returned {len(result)} rows")
         return result

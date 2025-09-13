@@ -48,7 +48,7 @@ def retry_on_failure(retries=3, delay=2):
 @retry_on_failure(retries=3, delay=1)
 def fetch_users_with_retry(conn):
     cursor = conn.cursor(cursor_factory=RealDictCursor)
-    cursor.execute("SELECT * FROM user_data")  # your actual table is user_data
+    cursor.execute("SELECT * FROM user_data")  
     result = cursor.fetchall()
     cursor.close()
     return result
