@@ -7,7 +7,7 @@ def stream_users():
     connection = psycopg2.connect(
         host="localhost",
         user="postgres",         # your PostgreSQL username
-        password="admin123",     # your PostgreSQL password
+        password="Myart@2023!",     # your PostgreSQL password
         dbname="ALX_prodev"      # your PostgreSQL database
     )
     cursor = connection.cursor(cursor_factory=RealDictCursor)

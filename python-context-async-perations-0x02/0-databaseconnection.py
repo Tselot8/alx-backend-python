@@ -39,7 +39,7 @@ if __name__ == "__main__":
         dbname="alx_prodev"
     ) as conn:
         cursor = conn.cursor(cursor_factory=RealDictCursor)
-        cursor.execute("SELECT * FROM user_data LIMIT 5;")
+        cursor.execute("SELECT * FROM user_data as users;")
         results = cursor.fetchall()
         cursor.close()
 
