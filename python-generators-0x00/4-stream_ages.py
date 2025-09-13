@@ -1,11 +1,12 @@
 #!/usr/bin/python3
+import psycopg2.extras
 seed = __import__('seed')
 
 # ---------------- Generator: stream user ages ---------------- #
 def stream_user_ages():
     """Yields user ages one by one from the database."""
     connection = seed.connect_to_prodev()
-    cursor = connection.cursor(dictionary=True)
+    cursor = connection.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
     cursor.execute("SELECT age FROM user_data;")
     
     for row in cursor:  # ✅ loop 1

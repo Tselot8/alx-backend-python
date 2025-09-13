@@ -1,11 +1,12 @@
 #!/usr/bin/python3
+from psycopg2.extras import RealDictCursor
 seed = __import__('seed')
 
 # ---------------- Helper: fetch a page of users ---------------- #
 def paginate_users(page_size, offset):
     """Fetch a single page of users from the database."""
     connection = seed.connect_to_prodev()
-    cursor = connection.cursor(dictionary=True)
+    cursor = connection.cursor(cursor_factory=RealDictCursor)
     cursor.execute(f"SELECT * FROM user_data LIMIT {page_size} OFFSET {offset}")
     rows = cursor.fetchall()
     cursor.close()

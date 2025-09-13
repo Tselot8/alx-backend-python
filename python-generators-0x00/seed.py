@@ -23,7 +23,7 @@ def connect_db():
 def create_database(connection):
     """Create ALX_prodev database if it does not exist."""
     cursor = connection.cursor()
-    cursor.execute("SELECT 1 FROM pg_catalog.pg_database WHERE datname = 'ALX_prodev';")
+    cursor.execute("SELECT 1 FROM pg_catalog.pg_database WHERE datname = 'alx_prodev';")
     exists = cursor.fetchone()
     if not exists:
         cursor.execute("CREATE DATABASE ALX_prodev;")
@@ -38,8 +38,8 @@ def connect_to_prodev():
         connection = psycopg2.connect(
             host="localhost",
             user="postgres",
-            password="admin123",
-            dbname="ALX_prodev"
+            password="Myart@2023!",
+            dbname="alx_prodev"
         )
         return connection
     except psycopg2.Error as e:
@@ -93,3 +93,18 @@ def stream_users():
             yield row
         cursor.close()
         connection.close()
+
+if __name__ == "__main__":
+    # 1️⃣ Connect to Postgres server (no DB yet) and create database
+    conn = connect_db()
+    if conn:
+        create_database(conn)
+        conn.close()
+
+    # 2️⃣ Connect to the new database, create table, and insert CSV data
+    conn = connect_to_prodev()
+    if conn:
+        create_table(conn)
+        insert_data(conn, "user_data.csv")
+        conn.close()
+

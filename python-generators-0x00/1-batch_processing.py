@@ -18,13 +18,13 @@ def connect_to_prodev():
 
 def stream_users_in_batches(batch_size):
     """
-    Generator that fetches rows from user_data in batches of batch_size.
+    Generator that yields batches of users from user_data.
+    Each batch is a list of rows (dicts).
     """
     connection = connect_to_prodev()
-    if connection:  # only proceed if connection succeeded
-        cursor = connection.cursor()
+    if connection:
+        cursor = connection.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
         offset = 0
-
         while True:
             cursor.execute(
                 "SELECT user_id, name, email, age FROM user_data ORDER BY user_id LIMIT %s OFFSET %s;",
@@ -33,32 +33,16 @@ def stream_users_in_batches(batch_size):
             rows = cursor.fetchall()
             if not rows:
                 break
-            for row in rows:
-                yield {
-                    "user_id": row[0],
-                    "name": row[1],
-                    "email": row[2],
-                    "age": row[3]
-                }
+            yield rows  # ✅ yield a whole batch at once
             offset += batch_size
-
         cursor.close()
         connection.close()
-
 
 def batch_processing(batch_size):
     """
     Processes users in batches and prints only those older than 25.
     """
-    batch = []
-    for user in stream_users_in_batches(batch_size):
-        if user["age"] > 25:
-            batch.append(user)
-        if len(batch) == batch_size:
-            for u in batch:
-                print(u)
-            batch = []
-
-    # Print remaining users if any
-    for u in batch:
-        print(u)
+    for batch in stream_users_in_batches(batch_size):   # loop 1
+        for user in batch:                              # loop 2
+            if user["age"] > 25:
+                print(user)
