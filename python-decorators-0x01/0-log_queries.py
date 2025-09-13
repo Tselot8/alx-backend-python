@@ -1,14 +1,16 @@
 import psycopg2
 from psycopg2 import extras
 import functools
+from datetime import datetime  # <-- add this import
 
-#### decorator to log SQL queries
+#### decorator to log SQL queries with timestamp
 def log_queries(func):
+    @functools.wraps(func)
     def wrapper(*args, **kwargs):
         query = kwargs.get('query') if 'query' in kwargs else args[0]
-        print(f"[LOG] Executing query: {query}")  # <-- this should print
+        print(f"[{datetime.now()}] [LOG] Executing query: {query}")  # timestamp added
         result = func(*args, **kwargs)
-        print(f"[LOG] Query returned {len(result)} rows")  # <-- optional
+        print(f"[{datetime.now()}] [LOG] Query returned {len(result)} rows")
         return result
     return wrapper
 
@@ -18,7 +20,7 @@ def fetch_all_users(query):
         host="localhost",
         user="postgres",
         password="Myart@2023!",
-        dbname="alx_prodev"  # replace with your actual database name
+        dbname="alx_prodev"
     )
     cursor = conn.cursor(cursor_factory=extras.RealDictCursor)
     cursor.execute(query)
