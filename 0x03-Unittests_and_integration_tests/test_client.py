@@ -5,7 +5,7 @@ Unit and integration tests for GithubOrgClient.
 
 import unittest
 from parameterized import parameterized, parameterized_class
-from unittest.mock import patch, PropertyMock, Mock
+from unittest.mock import patch, PropertyMock
 from client import GithubOrgClient
 from fixtures import TEST_PAYLOAD
 
@@ -36,9 +36,7 @@ class TestGithubOrgClient(unittest.TestCase):
         with patch.object(
             GithubOrgClient, "org", new_callable=PropertyMock
         ) as mock_org:
-            mock_org.return_value = {
-                "repos_url": "https://fake-url.com/repos"
-            }
+            mock_org.return_value = {"repos_url": "https://fake-url.com/repos"}
             client = GithubOrgClient("google")
             self.assertEqual(
                 client._public_repos_url, "https://fake-url.com/repos"
@@ -63,9 +61,7 @@ class TestGithubOrgClient(unittest.TestCase):
             self.assertEqual(client.public_repos(), ["repo1", "repo2"])
 
             # Test repo names with license filter
-            self.assertEqual(
-                client.public_repos("apache-2.0"), ["repo1"]
-            )
+            self.assertEqual(client.public_repos("apache-2.0"), ["repo1"])
 
             # Ensure mocks were called once
             mock_url.assert_called_once()
@@ -91,7 +87,7 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        """Start patcher for requests.get and set side_effect"""
+        """Start patcher for client.get_json and define side_effect"""
         def get_json_side_effect(url):
             if url == cls.org_payload["repos_url"]:
                 return cls.repos_payload
@@ -100,7 +96,7 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
         cls.get_patcher = patch(
             "client.get_json", side_effect=get_json_side_effect
         )
-        cls.get_patcher.start()
+        cls.get_patcher_started = cls.get_patcher.start()
 
     @classmethod
     def tearDownClass(cls):
@@ -108,8 +104,8 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
         cls.get_patcher.stop()
 
     def setUp(self):
-        """Expose get_patcher at instance level for checker"""
-        self.get_patcher = self.__class__.get_patcher
+        """Expose patcher at instance level for checker"""
+        self.get_patcher = self.__class__.get_patcher_started
 
     def test_public_repos(self):
         """Test public_repos returns all expected repos"""
