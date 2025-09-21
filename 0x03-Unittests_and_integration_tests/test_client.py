@@ -30,9 +30,7 @@ class TestGithubOrgClient(unittest.TestCase):
         """Test _public_repos_url property"""
         client = GithubOrgClient("google")
         with patch.object(GithubOrgClient, "org", new_callable=PropertyMock) as mo:
-            mo.return_value = {
-                "repos_url": "https://api.github.com/orgs/google/repos"
-            }
+            mo.return_value = {"repos_url": "https://api.github.com/orgs/google/repos"}
             self.assertEqual(
                 client._public_repos_url,
                 "https://api.github.com/orgs/google/repos"
@@ -43,9 +41,7 @@ class TestGithubOrgClient(unittest.TestCase):
         """Test public_repos method"""
         client = GithubOrgClient("google")
         mock_get_json.return_value = [{"name": "repo1"}, {"name": "repo2"}]
-        with patch.object(
-            GithubOrgClient, "_public_repos_url", new_callable=PropertyMock
-        ) as mu:
+        with patch.object(GithubOrgClient, "_public_repos_url", new_callable=PropertyMock) as mu:
             mu.return_value = "url"
             repos = client.public_repos()
             self.assertEqual(repos, ["repo1", "repo2"])
@@ -59,10 +55,7 @@ class TestGithubOrgClient(unittest.TestCase):
     def test_has_license(self, repo, license_key, expected):
         """Test has_license method"""
         client = GithubOrgClient("google")
-        self.assertEqual(
-            client.has_license(repo, license_key),
-            expected
-        )
+        self.assertEqual(client.has_license(repo, license_key), expected)
 
 
 @parameterized_class(

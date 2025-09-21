@@ -51,7 +51,7 @@ class TestGetJson(unittest.TestCase):
 
 
 class TestMemoize(unittest.TestCase):
-    """Test memoize function"""
+    """Test memoize decorator"""
 
     def test_memoize(self):
         """Test memoized property calls method only once"""
@@ -60,11 +60,11 @@ class TestMemoize(unittest.TestCase):
             def a_method(self):
                 return 42
 
+            @memoize
+            def a_property(self):
+                return self.a_method()
+
         obj = TestClass()
-
-        # dynamically apply memoize to property
-        obj.a_property = memoize(obj.a_method)
-
         with patch.object(obj, "a_method", wraps=obj.a_method) as mock_method:
             result1 = obj.a_property
             result2 = obj.a_property
