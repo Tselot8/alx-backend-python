@@ -119,8 +119,9 @@ class TestGithubOrgClient(unittest.TestCase):
         with patch(
             "client.GithubOrgClient._public_repos_url",
             new=property(
-                lambda self:
-                "https://api.github.com/orgs/test_org/repos"
+                lambda self: (
+                    "https://api.github.com/orgs/test_org/repos"
+                )
             ),
         ):
             client = GithubOrgClient("test_org")
@@ -181,7 +182,9 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
         """Test that public_repos filters repos by license."""
         client = GithubOrgClient("google")
         repos = client.public_repos(
-            license="apache-2.0"
+            license=(
+                "apache-2.0"
+            )
         )
         self.assertEqual(repos, self.apache2_repos)
 
