@@ -67,7 +67,11 @@ class TestMemoize(unittest.TestCase):
                 return self.a_method()
 
         test_obj = TestClass()
-        with patch.object(TestClass, "a_method", return_value=42) as mock_method:
+        with patch.object(
+            TestClass,
+            "a_method",
+            return_value=42
+        ) as mock_method:
             result1 = test_obj.a_property
             result2 = test_obj.a_property
             self.assertEqual(result1, 42)
@@ -88,11 +92,9 @@ class TestGithubOrgClient(unittest.TestCase):
         mock_get_json.return_value = {"login": org_name}
         client = GithubOrgClient(org_name)
         result = client.org
-        url = (
-            f"https://api.github.com/orgs/"
-            f"{org_name}"
+        mock_get_json.assert_called_once_with(
+            f"https://api.github.com/orgs/{org_name}"
         )
-        mock_get_json.assert_called_once_with(url)
         self.assertEqual(result, {"login": org_name})
 
     def test_public_repos_url(self):
@@ -129,8 +131,9 @@ class TestGithubOrgClient(unittest.TestCase):
             client = GithubOrgClient("test_org")
             repos = client.public_repos()
             self.assertEqual(repos, ["repo1", "repo2", "repo3"])
-            url = "https://api.github.com/orgs/test_org/repos"
-            mock_get_json.assert_called_once_with(url)
+            mock_get_json.assert_called_once_with(
+                "https://api.github.com/orgs/test_org/repos"
+            )
 
     @parameterized.expand([
         ({"license": {"key": "my_license"}}, "my_license", True),
@@ -183,7 +186,9 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
         """Test that public_repos filters repos by license."""
         client = GithubOrgClient("google")
         repos = client.public_repos(
-            license="apache-2.0"
+            license=(
+                "apache-2.0"
+            )
         )
         self.assertEqual(repos, self.apache2_repos)
 
