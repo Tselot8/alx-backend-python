@@ -29,19 +29,32 @@ class TestGithubOrgClient(unittest.TestCase):
     def test_public_repos_url(self):
         """Test _public_repos_url property"""
         client = GithubOrgClient("google")
-        with patch.object(GithubOrgClient, "org", new_callable=PropertyMock) as mo:
-            mo.return_value = {"repos_url": "https://api.github.com/orgs/google/repos"}
+        with patch.object(
+            GithubOrgClient,
+            "org",
+            new_callable=PropertyMock,
+        ) as mo:
+            mo.return_value = {
+                "repos_url": "https://api.github.com/orgs/google/repos"
+            }
             self.assertEqual(
                 client._public_repos_url,
-                "https://api.github.com/orgs/google/repos"
+                "https://api.github.com/orgs/google/repos",
             )
 
     @patch("client.get_json")
     def test_public_repos(self, mock_get_json):
         """Test public_repos method"""
         client = GithubOrgClient("google")
-        mock_get_json.return_value = [{"name": "repo1"}, {"name": "repo2"}]
-        with patch.object(GithubOrgClient, "_public_repos_url", new_callable=PropertyMock) as mu:
+        mock_get_json.return_value = [
+            {"name": "repo1"},
+            {"name": "repo2"},
+        ]
+        with patch.object(
+            GithubOrgClient,
+            "_public_repos_url",
+            new_callable=PropertyMock,
+        ) as mu:
             mu.return_value = "url"
             repos = client.public_repos()
             self.assertEqual(repos, ["repo1", "repo2"])
@@ -60,7 +73,7 @@ class TestGithubOrgClient(unittest.TestCase):
 
 @parameterized_class(
     ("org_payload", "repos_payload", "expected_repos", "apache2_repos"),
-    TEST_PAYLOAD
+    TEST_PAYLOAD,
 )
 class TestIntegrationGithubOrgClient(unittest.TestCase):
     """Integration test for GithubOrgClient.public_repos"""
@@ -97,5 +110,5 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
         client = GithubOrgClient("google")
         self.assertEqual(
             client.public_repos(license="apache-2.0"),
-            self.apache2_repos
+            self.apache2_repos,
         )
