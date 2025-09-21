@@ -36,9 +36,13 @@ class TestGithubOrgClient(unittest.TestCase):
         with patch.object(
             GithubOrgClient, "org", new_callable=PropertyMock
         ) as mock_org:
-            mock_org.return_value = {"repos_url": "https://fake-url.com/repos"}
+            mock_org.return_value = {
+                "repos_url": "https://fake-url.com/repos"
+            }
             client = GithubOrgClient("google")
-            self.assertEqual(client._public_repos_url, "https://fake-url.com/repos")
+            self.assertEqual(
+                client._public_repos_url, "https://fake-url.com/repos"
+            )
 
     @patch("client.get_json")
     def test_public_repos(self, mock_get_json):
@@ -59,7 +63,9 @@ class TestGithubOrgClient(unittest.TestCase):
             self.assertEqual(client.public_repos(), ["repo1", "repo2"])
 
             # Test repo names with license filter
-            self.assertEqual(client.public_repos("apache-2.0"), ["repo1"])
+            self.assertEqual(
+                client.public_repos("apache-2.0"), ["repo1"]
+            )
 
             # Ensure mocks were called once
             mock_url.assert_called_once()
@@ -71,7 +77,9 @@ class TestGithubOrgClient(unittest.TestCase):
     ])
     def test_has_license(self, repo, license_key, expected):
         """Test has_license method returns correct boolean"""
-        self.assertEqual(GithubOrgClient.has_license(repo, license_key), expected)
+        self.assertEqual(
+            GithubOrgClient.has_license(repo, license_key), expected
+        )
 
 
 @parameterized_class(
@@ -89,17 +97,19 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
                 return cls.repos_payload
             return cls.org_payload
 
-        cls.patcher = patch("client.get_json", side_effect=get_json_side_effect)
-        cls.mock_get = cls.patcher.start()
+        cls.get_patcher = patch(
+            "client.get_json", side_effect=get_json_side_effect
+        )
+        cls.get_patcher.start()
 
     @classmethod
     def tearDownClass(cls):
         """Stop patcher"""
-        cls.patcher.stop()
+        cls.get_patcher.stop()
 
     def setUp(self):
-        """Expose mock object at instance level for checker"""
-        self.mock_get = self.__class__.mock_get
+        """Expose get_patcher at instance level for checker"""
+        self.get_patcher = self.__class__.get_patcher
 
     def test_public_repos(self):
         """Test public_repos returns all expected repos"""
