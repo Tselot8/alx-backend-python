@@ -95,7 +95,7 @@ class OffensiveLanguageMiddleware:
 User = get_user_model()
 logger = logging.getLogger(__name__)
 
-class RolePermissionMiddleware:
+class RolepermissionMiddleware:
     """
     Middleware to enforce role-based access control.
     Only users with role 'admin' or 'moderator' can access certain endpoints.
