@@ -11,14 +11,9 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
-
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
-
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-&qgrnibx9$8!l*)a8%=o3eknxmt$w=o*kxq!1j9&v)$91&a5=g'
 
@@ -26,6 +21,12 @@ SECRET_KEY = 'django-insecure-&qgrnibx9$8!l*)a8%=o3eknxmt$w=o*kxq!1j9&v)$91&a5=g
 DEBUG = True
 
 ALLOWED_HOSTS = []
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+
+# Quick-start development settings - unsuitable for production
+# See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
+
 
 
 # Application definition
@@ -39,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'chats',
-    'messaging_app'
+    'django_filters',
 ]
 
 MIDDLEWARE = [
@@ -77,10 +78,15 @@ WSGI_APPLICATION = 'messaging_app.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'messaging_db',      # your database name
+        'USER': 'postgres',          # your DB username
+        'PASSWORD': 'admin123',  # your DB password
+        'HOST': 'localhost',         # usually localhost
+        'PORT': '5432',              # default PostgreSQL port
     }
 }
+
 
 
 # Password validation
@@ -129,10 +135,16 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',  # fixed
+        'chats.permissions.IsParticipantOfConversation',
     ],
 }
 
-
+SIMPLE_JWT = {
+    "USER_ID_FIELD": "user_id",   # 👈 match your custom user PK
+    "USER_ID_CLAIM": "user_id",   # 👈 make sure the token stores this claim
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+}

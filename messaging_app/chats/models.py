@@ -10,7 +10,6 @@ class User(AbstractUser):
     first_name = models.CharField(max_length=30, null=False, blank=False)
     last_name = models.CharField(max_length=30, null=False, blank=False)
     email = models.EmailField(unique=True, null=False, blank=False)
-    password_hash = models.CharField(max_length=128, null=False, blank=False)
     phone_number = models.CharField(max_length=20, null=True, blank=True)
 
     ROLE_CHOICES = (
@@ -26,6 +25,9 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.email
+    @property
+    def id(self):
+        return self.user_id
 
 
 # -----------------------

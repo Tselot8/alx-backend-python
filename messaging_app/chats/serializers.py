@@ -32,7 +32,7 @@ class MessageSerializer(serializers.ModelSerializer):
         fields = ['message_id', 'sender', 'message_body', 'sent_at']
 
     def validate_message_body(self, value):
-        """Ensure message_body is not empty"""
+        """Ensure message_body is not empty or just whitespace"""
         if not value.strip():
             raise serializers.ValidationError("Message body cannot be empty")
         return value
@@ -59,3 +59,14 @@ class ConversationSerializer(serializers.ModelSerializer):
         if latest:
             return latest.message_body
         return None
+    
+    def create(self, validated_data):
+        """
+        Automatically add the logged-in user as a participant
+        when creating a new conversation.
+        """
+        request = self.context.get("request")
+        conversation = Conversation.objects.create(**validated_data)
+        if request and request.user.is_authenticated:
+            conversation.participants.add(request.user)
+        return conversation

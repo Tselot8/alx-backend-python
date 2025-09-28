@@ -1,0 +1,226 @@
+{
+	"info": {
+		"_postman_id": "cf76e16c-c7d8-4fac-b447-5b3a6c81ffc0",
+		"name": "Messaging API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "46750975",
+		"_collection_link": "https://tselotmillion.postman.co/workspace/e05de248-17ea-4e9f-82b8-0766ce49043f/collection/46750975-cf76e16c-c7d8-4fac-b447-5b3a6c81ffc0?action=share&source=collection_link&creator=46750975"
+	},
+	"item": [
+		{
+			"name": "Signup User",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"username\": \"bob\",\r\n  \"password\": \"bob123\",\r\n  \"email\": \"bob@example.com\"\r\n}\r\n\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/auth/signup/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"auth",
+						"signup",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Conversation",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzU5MDQ4NjIxLCJpYXQiOjE3NTkwNDUwMjEsImp0aSI6IjIwZGVjYzlhYTNhODRmODFhNWZkYzJhNjk0YWYxNTZhIiwidXNlcl9pZCI6IjYwMDlhYmVlLWJkYzUtNDEzNi1hOTQxLTQ3MDUzY2Q3MDk5ZSJ9.mkCZ0g-u_BOJHgIQ8u1em3M8QpctFTNiRrHc2GF-Fjk",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"title\": \"Project Discussion\",\r\n  \"participants\": [\"bob\", \"alice\"]\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/conversations/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"conversations",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Send Message",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzU5MDQ4NjIxLCJpYXQiOjE3NTkwNDUwMjEsImp0aSI6IjIwZGVjYzlhYTNhODRmODFhNWZkYzJhNjk0YWYxNTZhIiwidXNlcl9pZCI6IjYwMDlhYmVlLWJkYzUtNDEzNi1hOTQxLTQ3MDUzY2Q3MDk5ZSJ9.mkCZ0g-u_BOJHgIQ8u1em3M8QpctFTNiRrHc2GF-Fjk",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"message_body\": \"Hello, this is a test message!\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/conversations/fce5876c-5697-49f5-baa0-df3e97670c0b/add_message/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"conversations",
+						"fce5876c-5697-49f5-baa0-df3e97670c0b",
+						"add_message",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Fetch Conversations",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzU5MDQ4NjIxLCJpYXQiOjE3NTkwNDUwMjEsImp0aSI6IjIwZGVjYzlhYTNhODRmODFhNWZkYzJhNjk0YWYxNTZhIiwidXNlcl9pZCI6IjYwMDlhYmVlLWJkYzUtNDEzNi1hOTQxLTQ3MDUzY2Q3MDk5ZSJ9.mkCZ0g-u_BOJHgIQ8u1em3M8QpctFTNiRrHc2GF-Fjk",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/conversations/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"conversations",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Fetch Messages",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzU5MDQ4NjIxLCJpYXQiOjE3NTkwNDUwMjEsImp0aSI6IjIwZGVjYzlhYTNhODRmODFhNWZkYzJhNjk0YWYxNTZhIiwidXNlcl9pZCI6IjYwMDlhYmVlLWJkYzUtNDEzNi1hOTQxLTQ3MDUzY2Q3MDk5ZSJ9.mkCZ0g-u_BOJHgIQ8u1em3M8QpctFTNiRrHc2GF-Fjk",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/conversations/fce5876c-5697-49f5-baa0-df3e97670c0b/messages/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"conversations",
+						"fce5876c-5697-49f5-baa0-df3e97670c0b",
+						"messages",
+						""
+					],
+					"query": [
+						{
+							"key": "",
+							"value": null,
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Unauthorized Access Test",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/conversations/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"conversations",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
