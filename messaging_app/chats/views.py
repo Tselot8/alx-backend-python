@@ -10,6 +10,7 @@ from .pagination import MessagePagination
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
 from django.db import IntegrityError
+from rest_framework.permissions import IsAuthenticated
 
 # -----------------------
 # Conversation ViewSet
@@ -70,12 +71,12 @@ class MessageViewSet(viewsets.ModelViewSet):
     filterset_class = MessageFilter        
     search_fields = ['message_body']
     ordering_fields = ['sent_at']
-    permission_classes = [IsParticipantOfConversation]
+    permission_classes = [IsAuthenticated, IsParticipantOfConversation]
     pagination_class = MessagePagination
 
     def get_queryset(self):
         # Return only messages in conversations the user participates in, ordered by sent_at
-        return self.queryset.filter(conversation__participants=self.request.user).order_by('sent_at')
+        return Message.objects.filter(conversation__participants=self.request.user).order_by('sent_at')
 
     def perform_create(self, serializer):
         # Automatically set the sender to the current user

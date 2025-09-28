@@ -140,7 +140,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'chats.permissions.IsParticipantOfConversation',
     ],
-    'DEFAULT_PAGINATION_CLASS': 'chats.pagination.MessagePagination', 
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',  # 👈 use DRF built-in
     'PAGE_SIZE': 20,
 }
 
