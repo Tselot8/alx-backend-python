@@ -140,6 +140,8 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'chats.permissions.IsParticipantOfConversation',
     ],
+    'DEFAULT_PAGINATION_CLASS': 'chats.pagination.MessagePagination', 
+    'PAGE_SIZE': 20,
 }
 
 SIMPLE_JWT = {
