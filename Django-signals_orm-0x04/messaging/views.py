@@ -16,8 +16,8 @@ def delete_user(request):
 @cache_page(60)  # cache 60 seconds
 @login_required
 def inbox(request):
-    # Fetch unread messages sent to the current user
-    messages = Message.objects.filter(receiver=request.user, read=False)\
+    # Use custom manager to fetch unread messages for the current user
+    messages = Message.unread.for_user(request.user)\
         .select_related('sender', 'receiver')\
         .prefetch_related('replies')\
         .only('id', 'sender', 'receiver', 'content', 'timestamp', 'read', 'parent_message')
@@ -27,7 +27,7 @@ def inbox(request):
 # ---- Recursive function to fetch all replies in threaded format ----
 def get_all_replies(message, user):
     replies_list = []
-    for reply in Message.objects.filter(parent_message=message, receiver=user)\
+    for reply in Message.objects.filter(parent_message=message, sender=user)\
             .select_related('sender', 'receiver')\
             .only('id', 'sender', 'receiver', 'content', 'timestamp', 'parent_message'):
         replies_list.append({
