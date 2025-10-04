@@ -1,7 +1,6 @@
 # messaging/views.py
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from django.views.decorators.cache import cache_page
 from .models import Message
 
@@ -17,7 +16,7 @@ def delete_user(request):
 @login_required
 def inbox(request):
     # Use custom manager to fetch unread messages for the current user
-    messages = Message.unread.for_user(request.user)\
+    messages = Message.unread.unread_for_user(request.user)\
         .select_related('sender', 'receiver')\
         .prefetch_related('replies')\
         .only('id', 'sender', 'receiver', 'content', 'timestamp', 'read', 'parent_message')
@@ -25,14 +24,14 @@ def inbox(request):
     return render(request, "message/inbox.html", {"messages": messages})
 
 # ---- Recursive function to fetch all replies in threaded format ----
-def get_all_replies(message, user):
+def get_all_replies(message, request_user):
     replies_list = []
-    for reply in Message.objects.filter(parent_message=message, sender=user)\
+    for reply in Message.objects.filter(parent_message=message, sender=request_user)\
             .select_related('sender', 'receiver')\
             .only('id', 'sender', 'receiver', 'content', 'timestamp', 'parent_message'):
         replies_list.append({
             "reply": reply,
-            "replies": get_all_replies(reply, user)  # recursive call
+            "replies": get_all_replies(reply, request_user)  # recursive call
         })
     return replies_list
 
