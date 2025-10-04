@@ -11,6 +11,9 @@ from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
 from django.db import IntegrityError
 from rest_framework.permissions import IsAuthenticated
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+
 
 # -----------------------
 # Conversation ViewSet
@@ -61,9 +64,6 @@ class ConversationViewSet(viewsets.ModelViewSet):
 # Message ViewSet
 # -----------------------
 class MessageViewSet(viewsets.ModelViewSet):
-    """
-    Provides endpoints to list messages and create new messages.
-    """
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
@@ -74,12 +74,16 @@ class MessageViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsParticipantOfConversation]
     pagination_class = MessagePagination
 
+    @method_decorator(cache_page(60))  # cache for 60 seconds
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
     def get_queryset(self):
-        # Return only messages in conversations the user participates in, ordered by sent_at
-        return Message.objects.filter(conversation__participants=self.request.user).order_by('sent_at')
+        return Message.objects.filter(
+            conversation__participants=self.request.user
+        ).order_by('sent_at')
 
     def perform_create(self, serializer):
-        # Automatically set the sender to the current user
         serializer.save(sender=self.request.user)
     
 class SignupView(APIView):
