@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'chats',
     'django_filters',
-    'messaging',
 ]
 
 MIDDLEWARE = [
@@ -80,14 +79,13 @@ WSGI_APPLICATION = 'messaging_app.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'messaging_db',      # your database name
-        'USER': 'postgres',          # your DB username
-        'PASSWORD': 'admin123',  # your DB password
-        'HOST': 'localhost',         # usually localhost
-        'PORT': '5432',              # default PostgreSQL port
+        'NAME': 'chatdb',
+        'USER': 'chatuser',
+        'PASSWORD': 'chatpass',
+        'HOST': 'chats_db_container',
+        'PORT': '5432',
     }
 }
-
 
 
 # Password validation
