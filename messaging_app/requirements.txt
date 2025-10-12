@@ -9,3 +9,4 @@ sqlparse==0.5.3
 typing_extensions==4.15.0
 tzdata==2025.2
 git+https://github.com/alanjds/drf-nested-routers.git@master#egg=drf-nested-routers
+python-dotenv

@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 # SECURITY WARNING: keep the secret key used in production secret!
@@ -79,14 +83,13 @@ WSGI_APPLICATION = 'messaging_app.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'chatdb',
-        'USER': 'chatuser',
-        'PASSWORD': 'chatpass',
-        'HOST': 'chats_db_container',
+        'NAME': os.getenv("POSTGRES_DB", "chatdb"),
+        'USER': os.getenv("POSTGRES_USER", "chatuser"),
+        'PASSWORD': os.getenv("POSTGRES_PASSWORD", "chatpass"),
+        'HOST': 'db',  # matches the service name in docker-compose
         'PORT': '5432',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
