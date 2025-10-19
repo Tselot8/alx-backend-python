@@ -1,0 +1,11 @@
+# kubectl-setup.ps1
+# Starts Minikube, checks cluster status, and lists all pods
+
+Write-Host "🚀 Starting Minikube cluster..." -ForegroundColor Cyan
+minikube start
+
+Write-Host "✅ Checking cluster status..." -ForegroundColor Green
+kubectl cluster-info
+
+Write-Host "📋 Listing all pods in all namespaces..." -ForegroundColor Yellow
+kubectl get pods --all-namespaces
