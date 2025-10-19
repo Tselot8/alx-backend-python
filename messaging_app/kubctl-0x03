@@ -1,0 +1,24 @@
+Write-Host "🚀 Starting Rolling Update for Blue Deployment..."
+
+# Apply the updated deployment (triggers rolling update)
+kubectl apply -f blue_deployment.yaml
+
+Write-Host "🔄 Monitoring rollout status..."
+kubectl rollout status deployment/messaging-app-blue
+
+Write-Host "🧠 Checking current pods after update:"
+kubectl get pods -l app=messaging-app,version=blue -o wide
+
+Write-Host "🌐 Testing app availability during update..."
+$serviceIP = kubectl get svc messaging-service -o jsonpath="{.spec.clusterIP}"
+$port = kubectl get svc messaging-service -o jsonpath="{.spec.ports[0].port}"
+
+Write-Host "Sending requests to http://$serviceIP`:$port ..."
+
+for ($i = 1; $i -le 15; $i++) {
+    $response = curl.exe -s -o $null -w "Request $i: %{http_code}`n" "http://$serviceIP`:$port/"
+    Write-Host $response
+    Start-Sleep -Seconds 1
+}
+
+Write-Host "✅ Rolling Update completed successfully!"

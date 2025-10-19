@@ -15,7 +15,15 @@ kubectl get pods
 Write-Host "⏳ Waiting a few seconds for pods to be ready..." -ForegroundColor DarkYellow
 Start-Sleep -Seconds 15
 
+Write-Host "📊 Checking resource usage of pods..." -ForegroundColor Magenta
+kubectl top pods -l app=django
+
 Write-Host "🚀 Performing load testing using wrk..." -ForegroundColor Green
 # Run load test (adjust URL if needed)
 if (Get-Command wrk -ErrorAction SilentlyContinue) {
-    wrk -t2 -c10 -d10s http://localhost:8
+    wrk -t2 -c10 -d10s http://localhost:8000
+} else {
+    Write-Host "⚠️ wrk not found, skipping load test" -ForegroundColor Red
+}
+
+Write-Host "✅ Scaling and monitoring completed!"

@@ -1,0 +1,30 @@
+# Apply blue deployment
+kubectl apply -f blue_deployment.yaml
+
+# Apply green deployment
+kubectl apply -f green_deployment.yaml
+
+# Apply service
+kubectl apply -f kubeservice.yaml
+
+# Wait for green deployment to be ready
+Write-Host "Waiting for green deployment to be ready..."
+kubectl rollout status deployment/django-green
+
+# Check logs of green pods
+$greenPods = kubectl get pods -l app=django,version=green -o jsonpath="{.items[*].metadata.name}" | Out-String
+$greenPods = $greenPods -split '\s+'
+
+foreach ($pod in $greenPods) {
+    if ($pod -ne "") {
+        Write-Host "Logs for $pod:"
+        kubectl logs $pod
+        Write-Host "`n------------------------`n"
+    }
+}
+
+# Switch traffic to green
+Write-Host "Switching service to green version..."
+kubectl patch service django-service -p '{"spec":{"selector":{"app":"django","version":"green"}}}'
+
+Write-Host "Blue-Green deployment completed!"
