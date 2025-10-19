@@ -83,10 +83,10 @@ WSGI_APPLICATION = 'messaging_app.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('MYSQL_DB', 'chatdb'),
-        'USER': os.getenv('MYSQL_USER', 'chatuser'),
-        'PASSWORD': os.getenv('MYSQL_PASSWORD', 'chatpass'),
-        'HOST': os.getenv('MYSQL_HOST', 'db'),
+        'NAME': os.getenv('POSTGRES_DB', 'chatdb'),
+        'USER': os.getenv('POSTGRES_USER', 'chatuser'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'chatpass'),
+        'HOST': os.getenv('POSTGRES_HOST', 'db'),  # 👈 This must match your Kubernetes service name
         'PORT': '5432',
     }
 }

@@ -1,0 +1,21 @@
+# kubctl-0x01.ps1
+# Scale Django app replicas, verify scaling, perform load testing, and monitor resource usage
+
+# Stop on errors
+$ErrorActionPreference = "Stop"
+
+Write-Host "🚀 Scaling Django app deployment to 3 replicas..." -ForegroundColor Cyan
+kubectl scale deployment django-messaging-deployment --replicas=3
+
+Start-Sleep -Seconds 10
+
+Write-Host "🧩 Verifying running pods..." -ForegroundColor Yellow
+kubectl get pods
+
+Write-Host "⏳ Waiting a few seconds for pods to be ready..." -ForegroundColor DarkYellow
+Start-Sleep -Seconds 15
+
+Write-Host "🚀 Performing load testing using wrk..." -ForegroundColor Green
+# Run load test (adjust URL if needed)
+if (Get-Command wrk -ErrorAction SilentlyContinue) {
+    wrk -t2 -c10 -d10s http://localhost:8

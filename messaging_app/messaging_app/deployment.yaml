@@ -16,17 +16,21 @@ spec:
     spec:
       containers:
         - name: django-messaging
-          image: messaging_app_image    # 👈 Replace with your built Docker image name
+          image: messaging_app_image  # 👈 Replace with your actual image name
           ports:
             - containerPort: 8000
           env:
             - name: DJANGO_SETTINGS_MODULE
               value: "messaging_app.settings"
-            - name: DEBUG
-              value: "1"
-            - name: ALLOWED_HOSTS
-              value: "*"
-          imagePullPolicy: Never  # 👈 Important if using local Docker image with Minikube
+            - name: POSTGRES_DB
+              value: "chatdb"
+            - name: POSTGRES_USER
+              value: "chatuser"
+            - name: POSTGRES_PASSWORD
+              value: "chatpass"
+            - name: POSTGRES_HOST
+              value: "db"
+          imagePullPolicy: Never
 ---
 apiVersion: v1
 kind: Service
