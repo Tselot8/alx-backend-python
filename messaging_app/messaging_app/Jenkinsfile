@@ -16,15 +16,17 @@ pipeline {
 
         stage('Setup Python') {
             steps {
-                bat 'python -m venv venv'
-                bat 'call venv\\Scripts\\activate && pip3 install --upgrade pip'
-                bat 'call venv\\Scripts\\activate && pip3 install -r messaging_app/requirements.txt'
+                // Create virtual environment
+                sh 'python3 -m venv venv'
+                // Activate and install dependencies
+                sh 'source venv/bin/activate && pip3 install --upgrade pip'
+                sh 'source venv/bin/activate && pip3 install -r messaging_app/requirements.txt'
             }
         }
 
         stage('Run Tests') {
             steps {
-                bat 'call venv\\Scripts\\activate && pytest messaging_app\\tests --junitxml=report.xml'
+                sh 'source venv/bin/activate && pytest messaging_app/tests --junitxml=report.xml'
             }
         }
 
