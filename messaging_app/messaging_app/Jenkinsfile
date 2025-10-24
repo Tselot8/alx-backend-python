@@ -1,0 +1,43 @@
+pipeline {
+    agent any
+
+    environment {
+        GITHUB_CREDENTIALS = credentials('github-alx-backend')
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git url: 'https://github.com/Tselot8/alx-backend-python.git', credentialsId: 'github-alx-backend'
+            }
+        }
+
+        stage('Setup Python') {
+            steps {
+                sh 'python -m venv venv'
+                sh '. venv/bin/activate && pip install --upgrade pip'
+                sh '. venv/bin/activate && pip install -r ..\\requirements.txt'
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                sh '. venv/bin/activate && pytest messaging_app/tests --junitxml=report.xml'
+            }
+        }
+
+        stage('Archive Report') {
+            steps {
+                junit 'report.xml'
+            }
+        }
+    }
+
+    post {
+        failure {
+            mail to: 'you@example.com',
+                 subject: 'Jenkins Pipeline Failed',
+                 body: 'The Jenkins pipeline has failed. Check the console output.'
+        }
+    }
+}
