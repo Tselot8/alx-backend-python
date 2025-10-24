@@ -8,21 +8,23 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/Tselot8/alx-backend-python.git', credentialsId: 'github-alx-backend'
+                git branch: 'main',
+                    url: 'https://github.com/Tselot8/alx-backend-python.git',
+                    credentialsId: 'github-alx-backend'
             }
         }
 
         stage('Setup Python') {
             steps {
-                bat 'python -m venv venv'
-                bat 'venv\\Scripts\\activate && python -m pip install --upgrade pip'
-                bat 'venv\\Scripts\\activate && python -m pip install -r messaging_app/requirements.txt'
+                sh 'python3 -m venv venv'
+                sh 'source venv/bin/activate && pip3 install --upgrade pip'
+                sh 'source venv/bin/activate && pip3 install -r messaging_app/requirements.txt'
             }
         }
 
         stage('Run Tests') {
             steps {
-                bat 'venv\\Scripts\\activate && pytest messaging_app\\tests --junitxml=report.xml'
+                sh 'source venv/bin/activate && pytest messaging_app/tests --junitxml=report.xml'
             }
         }
 
