@@ -8,21 +8,21 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git url: 'https://github.com/Tselot8/alx-backend-python.git', credentialsId: 'github-alx-backend'
+                git branch: 'main', url: 'https://github.com/Tselot8/alx-backend-python.git', credentialsId: 'github-alx-backend'
             }
         }
 
         stage('Setup Python') {
             steps {
                 bat 'python -m venv venv'
-                bat 'venv\\Scripts\\activate && pip install --upgrade pip'
-                bat 'venv\\Scripts\\activate && pip install -r ..\\requirements.txt'
+                bat 'venv\\Scripts\\activate && python -m pip install --upgrade pip'
+                bat 'venv\\Scripts\\activate && python -m pip install -r messaging_app/requirements.txt'
             }
         }
 
         stage('Run Tests') {
             steps {
-                sh '. venv/bin/activate && pytest messaging_app/tests --junitxml=report.xml'
+                bat 'venv\\Scripts\\activate && pytest messaging_app\\tests --junitxml=report.xml'
             }
         }
 
@@ -31,13 +31,5 @@ pipeline {
                 junit 'report.xml'
             }
         }
-    }
-
-    post {
-        //failure {
-        //    mail to: 'you@example.com',
-        //         subject: 'Jenkins Pipeline Failed',
-        //         body: 'The Jenkins pipeline has failed. Check the console output.'
-        //}
     }
 }
