@@ -1,10 +1,5 @@
 pipeline {
-    agent {
-        docker {
-            image 'python:3.13-slim'
-            args '-v /var/run/docker.sock:/var/run/docker.sock --privileged'
-        }
-    }
+    agent any
 
     environment {
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials')
@@ -13,6 +8,17 @@ pipeline {
     }
 
     stages {
+        stage('Setup Environment') {
+            steps {
+                bat '''
+                    python --version
+                    pip install --upgrade pip
+                    pip install -r messaging_app\\requirements.txt
+                    docker --version
+                '''
+            }
+        }
+
         stage('Checkout') {
             steps {
                 git branch: "${BRANCH_NAME}",
@@ -21,35 +27,23 @@ pipeline {
             }
         }
 
-        stage('Setup Environment') {
-            steps {
-                sh '''
-                    apt-get update && apt-get install -y docker.io git
-                    python3 -m venv venv
-                    ./venv/bin/pip3 install --upgrade pip
-                    ./venv/bin/pip3 install -r messaging_app/requirements.txt
-                    docker --version
-                '''
-            }
-        }
-
         stage('Run Tests') {
             steps {
-                sh './venv/bin/python -m pytest --junitxml=results.xml || true'
+                bat 'python -m pytest --junitxml=results.xml || exit 0'
                 junit 'results.xml'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                sh "docker build -t ${IMAGE_NAME}:latest messaging_app/"
+                bat "docker build -t ${IMAGE_NAME}:latest messaging_app/"
             }
         }
 
         stage('Push Docker Image') {
             steps {
-                sh "echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin"
-                sh "docker push ${IMAGE_NAME}:latest"
+                bat "echo %DOCKERHUB_CREDENTIALS_PSW% | docker login -u %DOCKERHUB_CREDENTIALS_USR% --password-stdin"
+                bat "docker push ${IMAGE_NAME}:latest"
             }
         }
     }
