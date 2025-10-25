@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials') 
-        IMAGE_NAME = "tselotmillion/messaging_app"               
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials')
+        IMAGE_NAME = "tselotmillion/messaging_app"
         BRANCH_NAME = "main"
     }
 
@@ -12,14 +12,17 @@ pipeline {
             steps {
                 git branch: "${BRANCH_NAME}",
                     url: 'https://github.com/Tselot8/alx-backend-python.git',
-                    credentialsId: 'github-alx-backend' // GitHub credentials in Jenkins
+                    credentialsId: 'github-alx-backend'
             }
         }
 
-        stage('Install Dependencies') {
+        stage('Setup Python Environment') {
             steps {
-                sh 'pip3 install --upgrade pip'
-                sh 'pip3 install -r messaging_app/requirements.txt'
+                sh '''
+                    python3 -m venv venv
+                    ./venv/bin/pip3 install --upgrade pip
+                    ./venv/bin/pip3 install -r messaging_app/requirements.txt
+                '''
             }
         }
 
@@ -27,7 +30,7 @@ pipeline {
             steps {
                 script {
                     if (fileExists('messaging_app/tests')) {
-                        sh 'pytest messaging_app/tests --junitxml=report.xml'
+                        sh './venv/bin/pytest messaging_app/tests --junitxml=report.xml'
                     } else {
                         echo "No test files found, skipping tests."
                     }
@@ -35,7 +38,6 @@ pipeline {
             }
             post {
                 always {
-                    // Only archive report if it exists
                     script {
                         if (fileExists('report.xml')) {
                             junit 'report.xml'
