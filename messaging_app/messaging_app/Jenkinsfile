@@ -19,13 +19,16 @@ pipeline {
         stage('Run Tests') {
             steps {
                 sh '''
-                    python3 -m pip install --upgrade pip
-                    python3 -m pip install -r messaging_app/requirements.txt
-                    python3 -m pytest --junitxml=results.xml || true
+                    python3 -m venv venv
+                    source venv/bin/activate
+                    pip3 install --upgrade pip
+                    pip3 install -r messaging_app/requirements.txt
+                    pytest --junitxml=results.xml || true
                 '''
                 junit 'results.xml'
             }
         }
+
 
         stage('Build Docker Image') {
             steps {
