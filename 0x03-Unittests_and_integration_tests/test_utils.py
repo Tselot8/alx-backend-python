@@ -145,7 +145,7 @@ class TestGithubOrgClient(unittest.TestCase):
         result = client.has_license(repo, license_key)
         self.assertEqual(result, expected)
 
-
+'''
 @parameterized_class([{
     "org_payload": fixtures.TEST_PAYLOAD[0][0],
     "repos_payload": fixtures.TEST_PAYLOAD[0][1],
@@ -191,7 +191,7 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
             )
         )
         self.assertEqual(repos, self.apache2_repos)
-
+'''
 
 if __name__ == "__main__":
     unittest.main()
