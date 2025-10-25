@@ -18,23 +18,25 @@ pipeline {
 
         stage('Run Tests') {
             steps {
-                bat 'python -m pip3 install --upgrade pip'
-                bat 'python -m pip3 install -r messaging_app\\requirements.txt'
-                bat 'python -m pytest --junitxml=results.xml || exit 0'
+                sh '''
+                    python3 -m pip install --upgrade pip
+                    python3 -m pip install -r messaging_app/requirements.txt
+                    python3 -m pytest --junitxml=results.xml || true
+                '''
                 junit 'results.xml'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                bat "docker build -t %IMAGE_NAME% messaging_app\\"
+                sh "docker build -t ${IMAGE_NAME}:latest messaging_app/"
             }
         }
 
         stage('Push Docker Image') {
             steps {
-                bat "echo %DOCKERHUB_CREDENTIALS_PSW% | docker login -u %DOCKERHUB_CREDENTIALS_USR% --password-stdin"
-                bat "docker push %IMAGE_NAME%"
+                sh "echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin"
+                sh "docker push ${IMAGE_NAME}:latest"
             }
         }
     }
