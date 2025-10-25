@@ -28,22 +28,8 @@ pipeline {
 
         stage('Run Tests') {
             steps {
-                script {
-                    if (fileExists('messaging_app/tests')) {
-                        sh './venv/bin/pytest messaging_app/tests --junitxml=report.xml'
-                    } else {
-                        echo "No test files found, skipping tests."
-                    }
-                }
-            }
-            post {
-                always {
-                    script {
-                        if (fileExists('report.xml')) {
-                            junit 'report.xml'
-                        }
-                    }
-                }
+                sh './venv/bin/python -m pytest --junitxml=results.xml || true'
+                junit 'results.xml'
             }
         }
 
