@@ -1,10 +1,5 @@
 pipeline {
-    agent {
-        dockerContainer {
-            image 'python:3.13-slim'
-            args '-v /var/run/docker.sock:/var/run/docker.sock --privileged'
-        }
-    }
+    agent any
 
     environment {
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials')
@@ -16,9 +11,12 @@ pipeline {
         stage('Setup Environment') {
             steps {
                 sh '''
+                    apt-get update
+                    apt-get install -y python3 python3-venv python3-pip docker.io git
+                    python3 -m venv venv
+                    ./venv/bin/pip3 install --upgrade pip
+                    ./venv/bin/pip3 install -r messaging_app/requirements.txt
                     python3 --version
-                    pip install --upgrade pip
-                    pip install -r messaging_app/requirements.txt
                     docker --version
                 '''
             }
@@ -34,7 +32,7 @@ pipeline {
 
         stage('Run Tests') {
             steps {
-                sh 'python3 -m pytest --junitxml=results.xml || true'
+                sh './venv/bin/python -m pytest --junitxml=results.xml || true'
                 junit 'results.xml'
             }
         }
