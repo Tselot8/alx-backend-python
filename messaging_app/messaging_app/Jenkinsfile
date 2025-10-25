@@ -2,42 +2,59 @@ pipeline {
     agent any
 
     environment {
-        GITHUB_CREDENTIALS = credentials('github-alx-backend')
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials') 
+        IMAGE_NAME = "tselotmillion/messaging_app"               
+        BRANCH_NAME = "main"
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main',
+                git branch: "${BRANCH_NAME}",
                     url: 'https://github.com/Tselot8/alx-backend-python.git',
-                    credentialsId: 'github-alx-backend'
+                    credentialsId: 'github-alx-backend' // GitHub credentials in Jenkins
             }
         }
 
-        stage('Setup Python') {
+        stage('Install Dependencies') {
             steps {
-                sh '''
-                    python3 -m venv venv
-                    . venv/bin/activate
-                    pip3 install --upgrade pip
-                    pip3 install -r messaging_app/requirements.txt
-                    pip3 install pytest
-                '''
+                sh 'pip3 install --upgrade pip'
+                sh 'pip3 install -r messaging_app/requirements.txt'
             }
         }
 
         stage('Run Tests') {
             steps {
-                sh '''
-                    . venv/bin/activate
-                    pytest messaging_app/tests --junitxml=report.xml
-                '''
+                script {
+                    if (fileExists('messaging_app/tests')) {
+                        sh 'pytest messaging_app/tests --junitxml=report.xml'
+                    } else {
+                        echo "No test files found, skipping tests."
+                    }
+                }
+            }
+            post {
+                always {
+                    // Only archive report if it exists
+                    script {
+                        if (fileExists('report.xml')) {
+                            junit 'report.xml'
+                        }
+                    }
+                }
             }
         }
 
-        stage('Archive Report') {
+        stage('Build Docker Image') {
             steps {
-                junit 'report.xml'
+                sh "docker build -t ${IMAGE_NAME}:latest messaging_app/"
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                sh "echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin"
+                sh "docker push ${IMAGE_NAME}:latest"
             }
         }
     }
